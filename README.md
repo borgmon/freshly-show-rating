@@ -1,5 +1,5 @@
 # freshly-show-rating
-A script show your freshly ratings
+A script shows your freshly ratings
 
 ---
 
