@@ -10,19 +10,33 @@ A script shows your freshly ratings
 1. copy this script 
 
 ```javascript
-javascript: (function () { 
-    fetch(`https://www.freshly.com/api/v1/users/${window.FRESHLY.currentUser.id}/ratings`).then(x => x.json()).then(x => {
-        x.data.ratings.forEach(e => {
-            var str = `<span class="badge meal-card__label mr-1" style="background-color: #2256cd">${e.main_rating}</span>`;
-            try {
-                document
-                    .querySelector(`div[data-test-meal-id='${e.meal_id}']`)
-                    .querySelector(".meal-card__meta")
-                    .insertAdjacentHTML('beforeend', str);
-            } catch{ }
-        });
+javascript: (function () {
+  function getBadge(str) {
+    return `<span class="badge meal-card__label mr-1" style="background-color: #2256cd">${str}</span>`
+  }
+  function append(mealId, html) {
+    document
+      .querySelector(`div[data-test-meal-id='${mealId}']`)
+      .querySelector(".meal-card__meta")
+      .insertAdjacentHTML('beforeend', html);
+  }
+
+  fetch(`https://www.freshly.com/api/v1/users/${window.FRESHLY.currentUser.id}/ratings`).then(x => x.json()).then(x => {
+    x.data.ratings.forEach(e => {
+      try {
+        append(e.meal_id, getBadge('★'.repeat(e.main_rating)))
+      } catch{ }
     });
- })();
+  });
+  fetch(`https://www.freshly.com/api/v1/users/${window.FRESHLY.currentUser.id}/unrated_meals`).then(x => x.json()).then(x => {
+    x.data.meal_mains.forEach(e => {
+      try {
+        append(e.id, getBadge('unrated'))
+      } catch{ }
+    });
+  });
+
+})();
 ```
 
 2. create a new browser bookmark
